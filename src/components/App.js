@@ -1,45 +1,49 @@
-import React, { useState } from "react";
+import React from "react";
 import CategoryFilter from "./CategoryFilter";
 import NewTaskForm from "./NewTaskForm";
 import TaskList from "./TaskList";
-
+import { useState } from "react";
 import { CATEGORIES, TASKS } from "../data";
-console.log("Here's the data you're working with");
-console.log({ CATEGORIES, TASKS });
 
 function App() {
-  const [data, setData] = useState(TASKS);
-  const [dataCategory, setDataCategory] = useState("All");
+  const idArray = TASKS.map((task, index) => {
+    return { ...task, id: index };
+  });
 
-  function handleDelete(text) {
-    const filteredList = data.filter((obj) => obj.text !== text);
-    setData(filteredList);
+  const [category, setCategory] = useState("All");
+  const [tasks, setTasks] = useState(idArray);
+
+  function addTask(newTask) {
+    return (
+      // how to set item to top of the list
+      setTasks([newTask, ...tasks])
+    );
   }
-  function handleClick(category) {
-    setDataCategory(category);
-    if (dataCategory === CATEGORIES[0]) {
+
+  function removeTask(taskId) {
+    let newTasks = tasks.filter((task) => {
+      if (task.id === taskId) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+    setTasks(newTasks);
+  }
+
+  const displayedTask = tasks.filter((task) => {
+    if (category === "All") {
       return true;
     } else {
-      const filteredCategories = data.filter(
-        (obj) => obj.category === dataCategory
-      );
-      setData(filteredCategories);
+      return category === task.category;
     }
-  }
-  const handleFormSubmit = (newTask) => {
-    setData([...data, newTask]);
-  };
-
+  });
   return (
     <div className="App">
       <h2>My tasks</h2>
-      <CategoryFilter
-        filterCategory={dataCategory}
-        handleClick={handleClick}
-        data={CATEGORIES}
-      />
-      <NewTaskForm data={CATEGORIES} setAppData={handleFormSubmit} />
-      <TaskList dataA={data} handleDelete={handleDelete} />
+      <CategoryFilter settingCategory={setCategory} categories={CATEGORIES} />
+      <NewTaskForm onTaskFormSubmit={addTask} categories={CATEGORIES} />
+      <TaskList removeTask={removeTask} tasks={displayedTask} />
     </div>
   );
 }

@@ -1,42 +1,33 @@
-import React, { useState } from "react";
+import React from "react";
+import { CATEGORIES } from "../data";
 
-function NewTaskForm({ data, setAppData }) {
-  const [textData, setTextData] = useState("");
-  const [categoryData, setCategoryData] = useState("");
-
-  const filteredCategories = data
-    .filter((category) => category !== "All")
-    .map((category) => {
-      return (
-        <option key={category} value={category}>
-          {category}
-        </option>
-      );
-    });
+function NewTaskForm({ categories, onTaskFormSubmit }) {
   function handleSubmit(e) {
     e.preventDefault();
-    setAppData({
-      text: textData,
-      category: categoryData,
+
+    onTaskFormSubmit({
+      text: e.target.text.value,
+      category: e.target.category.value,
     });
+    // how to reset values being input in the form
+    e.target.reset();
   }
   return (
     <form className="new-task-form" onSubmit={handleSubmit}>
       <label>
         Details
-        <input
-          type="text"
-          name="text"
-          onChange={(e) => setTextData(e.target.value)}
-        />
+        <input type="text" name="text" required />
       </label>
       <label>
         Category
-        <select
-          name="category"
-          onChange={(e) => setCategoryData(e.target.value)}
-        >
-          {filteredCategories}
+        <select name="category">
+          {categories.map((category) => {
+            if (category === "All") {
+              return null;
+            } else {
+              return <option key={category}>{category}</option>;
+            }
+          })}
         </select>
       </label>
       <input type="submit" value="Add task" />

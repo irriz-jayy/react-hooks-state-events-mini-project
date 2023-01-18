@@ -1,23 +1,15 @@
 import React from "react";
 import Task from "./Task";
+import { useState } from "react";
 
-function TaskList({ dataA, handleDelete }) {
-  const listingTasks = dataA.map((task) => {
-    return (
-      <Task
-        key={task.text}
-        text={task.text}
-        category={task.category}
-        handleDelete={handleDelete}
-      />
-    );
-  });
-
+function TaskList({tasks,removeTask}) {
+  
   return (
     <div className="tasks">
-      <table>
-        <tbody>{listingTasks}</tbody>
-      </table>
+      {tasks.map((task,index)=>{
+        return <Task removeTask={removeTask} taskId={task.id} key={index} text={task.text} category={task.category}/>
+      }
+      )}
     </div>
   );
 }
